@@ -1,0 +1,336 @@
+{
+  "info": {
+    "_postman_id": "a9d82e14-2394-4d83-b789-98e3b2e7fa12",
+    "name": "EduLearn LMS API - Midterm Collection",
+    "description": "Streamlined, production-ready Postman collection for EduLearn LMS backend. Organized into 4 core folders: Auth, Courses, Enrollments, and Reviews. Test scripts automatically capture JWT tokens and IDs into collection variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "courseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lectureId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth Module",
+      "description": "User registration, OTP verification, credential authentication, and profile inspection.",
+      "item": [
+        {
+          "name": "1. Signup (Register User)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.token) {",
+                  "        pm.collectionVariables.set('token', res.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Sarah Connor\",\n  \"email\": \"sarah.instructor@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"instructor\",\n  \"bio\": \"Senior Full-Stack Engineer and Instructor with 10+ years experience.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "2. Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.token) {",
+                  "        pm.collectionVariables.set('token', res.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sarah.instructor@example.com\",\n  \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify"]
+            }
+          }
+        },
+        {
+          "name": "3. Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.token) {",
+                  "        pm.collectionVariables.set('token', res.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sarah.instructor@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "4. Get Profile (Me)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Courses Module",
+      "description": "Course creation with lectures, Cloudinary media upload, and catalog exploration.",
+      "item": [
+        {
+          "name": "5. Create Course",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.course) {",
+                  "        pm.collectionVariables.set('courseId', res.data.course._id);",
+                  "        if (res.data.course.lectures && res.data.course.lectures.length > 0) {",
+                  "            pm.collectionVariables.set('lectureId', res.data.course.lectures[0]._id);",
+                  "        }",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Complete Node.js & Microservices Masterclass\",\n  \"description\": \"Master enterprise backend development with Node.js, Express, MongoDB Atlas, Cloudinary, and Clean Architecture.\",\n  \"category\": \"Web Development\",\n  \"level\": \"Intermediate\",\n  \"price\": 49.99,\n  \"isPublished\": true,\n  \"lectures\": [\n    {\n      \"title\": \"1. REST Architecture & Clean Services\",\n      \"durationMinutes\": 20,\n      \"videoUrl\": \"https://example.com/videos/lecture1.mp4\",\n      \"isPreview\": true\n    },\n    {\n      \"title\": \"2. JWT Authentication & Role-Based Access Control\",\n      \"durationMinutes\": 35,\n      \"videoUrl\": \"https://example.com/videos/lecture2.mp4\",\n      \"isPreview\": false\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"]
+            }
+          }
+        },
+        {
+          "name": "6. Get All Courses (Catalog)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/courses?page=1&limit=10&sort=newest",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "newest"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Enrollments Module",
+      "description": "Student course enrollment, lecture progress tracking, and student dashboard.",
+      "item": [
+        {
+          "name": "7. Enroll in Course",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/enrollments/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["enrollments", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "8. My Enrolled Courses & Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/enrollments/my",
+              "host": ["{{baseUrl}}"],
+              "path": ["enrollments", "my"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Reviews Module",
+      "description": "Verified student course reviews, ratings, and automatic course rating rollup.",
+      "item": [
+        {
+          "name": "9. Add Course Review",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excellent backend course! The clean architecture, JWT authentication, and Cloudinary uploads are top-notch.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{courseId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
