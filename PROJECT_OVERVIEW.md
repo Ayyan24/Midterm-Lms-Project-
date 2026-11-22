@@ -8,10 +8,6 @@
 - **Track:** Backend Web Development
 - **Course / Assessment:** Midterm Project Evaluation
 - **Deadline:** November 20
-- **Group Members:**
-  1. *Member 1 Name (ID / Roll No)*
-  2. *Member 2 Name (ID / Roll No)*
-  3. *Member 3 Name (ID / Roll No)*
 
 ---
 
