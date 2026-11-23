@@ -24,8 +24,10 @@ const app = createApp({ config, ...adapters() });
 
 export default async function handler(req, res) {
   try {
-    if (!req.url || req.url === "/api" || req.url === "/api/") {
+    if (!req.url || req.url === "/api" || req.url === "/api/" || req.url === "/api/index.js") {
       req.url = "/";
+    } else if (req.url.startsWith("/api/index.js/")) {
+      req.url = req.url.replace("/api/index.js", "");
     }
     await ensureDB();
     return new Promise((resolve, reject) => {
