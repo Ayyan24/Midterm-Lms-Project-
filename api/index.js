@@ -5,17 +5,29 @@ import mongoose from "mongoose";
 
 const config = loadEnv();
 
-// Cached connection for Serverless environments (Vercel)
-if (mongoose.connection.readyState === 0) {
-  mongoose
-    .connect(config.mongoUri, {
-      serverSelectionTimeoutMS: 5000,
-    })
-    .then(() => console.log("MongoDB connected (Vercel Serverless)"))
-    .catch((err) => console.error("MongoDB Atlas connection error:", err.message));
+let isConnected = false;
+
+async function ensureDB() {
+  if (!isConnected && mongoose.connection.readyState !== 1) {
+    try {
+      await mongoose.connect(config.mongoUri, {
+        serverSelectionTimeoutMS: 5000,
+      });
+      isConnected = true;
+    } catch (err) {
+      console.error("[Vercel DB Error]:", err.message);
+    }
+  }
 }
 
 const app = createApp({ config, ...adapters() });
 
-// Vercel natively accepts the Express app as default export
-export default app;
+export default async function handler(req, res) {
+  await ensureDB();
+  return new Promise((resolve, reject) => {
+    res.on("finish", resolve);
+    res.on("close", resolve);
+    res.on("error", reject);
+    app(req, res);
+  });
+}
