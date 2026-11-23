@@ -15,7 +15,7 @@ export function createApp(dependencies) {
   app.use(express.urlencoded({ extended: true }));
 
   // Root & Health routes
-  app.get("/", (req, res) =>
+  app.get(["/", "/api", "/api/v1"], (req, res) =>
     res.json({
       success: true,
       message: "EduLearn LMS REST API is running live!",

@@ -23,6 +23,7 @@ async function ensureDB() {
 const app = createApp({ config, ...adapters() });
 
 export default async function handler(req, res) {
+  if (req.url === "/api" || req.url === "/api/") req.url = "/";
   await ensureDB();
   return new Promise((resolve, reject) => {
     res.on("finish", resolve);
