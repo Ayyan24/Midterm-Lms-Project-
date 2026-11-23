@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { routes as authRoutes } from "./routes/auth/index.js";
 import { routes as courseRoutes } from "./routes/course/index.js";
 import { routes as enrollmentRoutes } from "./routes/enrollment/index.js";
@@ -8,11 +9,21 @@ import { errors, rateLimit } from "./middleware/error.js";
 export function createApp(dependencies) {
   const app = express();
   app.disable("x-powered-by");
+  app.use(cors());
   app.use(rateLimit({ max: 300 }));
   app.use(express.json({ limit: "64kb" }));
   app.use(express.urlencoded({ extended: true }));
 
-  // Health and test routes
+  // Root & Health routes
+  app.get("/", (req, res) =>
+    res.json({
+      success: true,
+      message: "EduLearn LMS REST API is running live!",
+      version: "1.0.0",
+      health: "/health",
+    })
+  );
+
   app.get("/health", (req, res) =>
     res.json({ success: true, status: "OK", uptime: process.uptime() })
   );

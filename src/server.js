@@ -1,3 +1,4 @@
+import "dotenv/config";
 import mongoose from "mongoose";
 import { createApp } from "./app.js";
 import { adapters } from "./config/adapter.js";
@@ -12,7 +13,7 @@ try {
   console.log(err.message);
 }
 
-const server = createApp({ config, ...adapters() }).listen(config.port, () =>
+const server = createApp({ config, ...adapters() }).listen(config.port, "0.0.0.0", () =>
   console.log(`EduLearn LMS Server running on http://localhost:${config.port}`)
 );
 
