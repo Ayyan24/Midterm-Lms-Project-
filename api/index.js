@@ -23,12 +23,21 @@ async function ensureDB() {
 const app = createApp({ config, ...adapters() });
 
 export default async function handler(req, res) {
-  if (req.url === "/api" || req.url === "/api/") req.url = "/";
-  await ensureDB();
-  return new Promise((resolve, reject) => {
-    res.on("finish", resolve);
-    res.on("close", resolve);
-    res.on("error", reject);
-    app(req, res);
-  });
+  try {
+    if (!req.url || req.url === "/api" || req.url === "/api/") {
+      req.url = "/";
+    }
+    await ensureDB();
+    return new Promise((resolve, reject) => {
+      res.on("finish", resolve);
+      res.on("close", resolve);
+      res.on("error", reject);
+      app(req, res);
+    });
+  } catch (err) {
+    console.error("[Vercel Handler Error]:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, error: err.message || "Internal Server Error" });
+    }
+  }
 }
